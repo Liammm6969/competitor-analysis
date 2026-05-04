@@ -35,6 +35,28 @@ const trainingSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    // ── Scraper fields ──────────────────────────────────────────────────────
+    source: {
+      type: String,
+      trim: true,
+      default: 'manual',   // 'facebook' | 'event_platform' | 'website' | 'manual'
+    },
+    source_hash: {
+      type: String,
+      trim: true,
+      index: true,          // Enables fast deduplication lookups
+      sparse: true,         // Allow null (for manually-entered records)
+    },
+    url: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    provider: {
+      type: String,
+      trim: true,
+      default: '',          // Human-readable provider name from scraper
+    },
   },
   {
     timestamps: true,
