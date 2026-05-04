@@ -18,7 +18,7 @@ export default function DiscoveryTable({ results, onApprove, isApproving }: { re
   const inputStyle = { padding: '0.25rem 0.4rem', fontSize: '0.85rem', width: '100%', minWidth: '80px' };
 
   return (
-    <div style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>
+    <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--color-border)', paddingTop: '1.5rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>
@@ -64,7 +64,7 @@ export default function DiscoveryTable({ results, onApprove, isApproving }: { re
             {filtered.map((r, i) => (
               <tr key={r.url || i}>
                 <td>
-                  <a href={r.url} target="_blank" rel="noreferrer" style={{ color: 'var(--color-accent-light)', textDecoration: 'none', fontWeight: 600 }}>
+                  <a href={r.url} target="_blank" rel="noreferrer" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}>
                     {r.provider || '—'}
                   </a>
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>

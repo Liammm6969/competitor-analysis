@@ -71,7 +71,7 @@ export default function Dashboard() {
                 <div key={t._id} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   padding: '0.625rem 0.75rem', borderRadius: 10,
-                  background: 'rgba(30,41,59,0.4)', border: '1px solid rgba(51,65,85,0.2)',
+                  background: 'var(--color-surface-2)', border: '1px solid var(--color-border)',
                 }}>
                   <div>
                     <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>{t.title}</div>
@@ -83,7 +83,7 @@ export default function Dashboard() {
                     <span className={`badge badge-${t.delivery_mode.toLowerCase().replace('-', '-')}`}>
                       {t.delivery_mode}
                     </span>
-                    <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#10b981' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--color-success)' }}>
                       ${t.price}
                     </span>
                   </div>
@@ -107,15 +107,15 @@ export default function Dashboard() {
                 <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <div style={{
                     width: 28, height: 28, borderRadius: 8, fontSize: '0.7rem', fontWeight: 700,
-                    background: i === 0 ? 'rgba(99,102,241,0.15)' : 'rgba(51,65,85,0.3)',
-                    color: i === 0 ? '#818cf8' : 'var(--color-text-muted)',
+                    background: i === 0 ? 'rgba(99,102,241,0.15)' : 'var(--color-surface-2)',
+                    color: i === 0 ? 'var(--color-accent)' : 'var(--color-text-muted)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>#{i + 1}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>{c.name}</div>
                     <div style={{
                       height: 4, borderRadius: 2, marginTop: 4,
-                      background: 'rgba(51,65,85,0.3)',
+                      background: 'var(--color-surface-3)',
                     }}>
                       <div style={{
                         height: '100%', borderRadius: 2,

@@ -130,7 +130,7 @@ export default function Competitors() {
           {categories.map((cat) => (
             <span key={cat} style={{
               padding: '0.3rem 0.75rem', borderRadius: 20, fontSize: '0.75rem', fontWeight: 500,
-              background: 'rgba(99,102,241,0.1)', color: '#818cf8', border: '1px solid rgba(99,102,241,0.2)',
+              background: 'rgba(99,102,241,0.1)', color: 'var(--color-accent)', border: '1px solid rgba(99,102,241,0.2)',
             }}>{cat}</span>
           ))}
         </div>
@@ -161,12 +161,12 @@ export default function Competitors() {
                 <tr key={c._id}>
                   <td style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{c.name}</td>
                   <td><span className="badge" style={{
-                    background: 'rgba(99,102,241,0.1)', color: '#818cf8'
+                    background: 'rgba(99,102,241,0.1)', color: 'var(--color-accent)'
                   }}>{c.category}</span></td>
                   <td>
                     {c.source_url ? (
                       <a href={c.source_url} target="_blank" rel="noreferrer" style={{
-                        color: 'var(--color-accent-light)', textDecoration: 'none',
+                        color: 'var(--color-accent)', textDecoration: 'none',
                         display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.8rem',
                       }}>
                         <Globe size={12} /> {new URL(c.source_url).hostname}

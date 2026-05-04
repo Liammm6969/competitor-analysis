@@ -48,7 +48,7 @@ export default function Layout() {
                 display: 'flex', alignItems: 'center', gap: '0.75rem',
                 padding: '0.65rem 0.75rem', borderRadius: 10, textDecoration: 'none',
                 fontSize: '0.875rem', fontWeight: isActive ? 600 : 400,
-                color: isActive ? 'var(--color-accent-light)' : 'var(--color-text-secondary)',
+                color: isActive ? 'var(--color-accent)' : 'var(--color-text-secondary)',
                 background: isActive ? 'rgba(99,102,241,0.1)' : 'transparent',
                 marginBottom: '0.25rem', transition: 'all 0.15s ease',
               }}>
@@ -68,7 +68,7 @@ export default function Layout() {
           }}>
             <div className="pulse-dot" />
             <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#34d399' }}>System Online</div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-success)' }}>System Online</div>
               <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>All services running</div>
             </div>
           </div>
@@ -79,7 +79,7 @@ export default function Layout() {
         <header style={{
           height: 64, borderBottom: '1px solid var(--color-border)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '0 2rem', background: 'rgba(17,24,39,0.8)',
+          padding: '0 2rem', background: 'rgba(255,255,255,0.8)',
           backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 30,
         }}>
           <h1 style={{ fontSize: '1.125rem', fontWeight: 700 }}>{pageTitle}</h1>
