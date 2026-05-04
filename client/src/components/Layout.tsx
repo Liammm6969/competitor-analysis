@@ -21,13 +21,13 @@ export default function Layout() {
       }}>
         <div style={{ padding: '0 1.5rem', marginBottom: '2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{
+            {/* <div style={{
               width: 36, height: 36, borderRadius: 10,
               background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <Activity size={20} color="white" />
-            </div>
+            </div> */}
             <div>
               <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>CompetitorIQ</div>
               <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Training Analytics</div>
@@ -76,7 +76,7 @@ export default function Layout() {
       </aside>
 
       <main style={{ flex: 1, marginLeft: 260, minHeight: '100vh' }}>
-        <header style={{
+        {/* <header style={{
           height: 64, borderBottom: '1px solid var(--color-border)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '0 2rem', background: 'rgba(255,255,255,0.8)',
@@ -89,7 +89,7 @@ export default function Layout() {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '0.8rem', fontWeight: 700, color: 'white', cursor: 'pointer',
           }}>CA</div>
-        </header>
+        </header> */}
         <div style={{ padding: '1.5rem 2rem' }}><Outlet /></div>
       </main>
     </div>

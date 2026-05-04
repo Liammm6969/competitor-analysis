@@ -56,6 +56,7 @@ const INSTITUTION_TERMS = [
   '"TESDA accredited"',
   '"CPD provider"',
   '"DOLE accredited"',
+  '"DepEd accredited"',
   '"seminar"',
   '"course"',
 ];
