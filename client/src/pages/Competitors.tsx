@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react'
-import { competitorApi } from '../lib/api'
-import type { Competitor } from '../lib/api'
-import { Plus, Trash2, Globe, X, Users } from 'lucide-react'
+import { competitorApi, scraperApi } from '../lib/api'
+import type { Competitor, DiscoveredRecord } from '../lib/api'
+import { Plus, Trash2, Globe, X, Users, Search, Loader, CheckCircle } from 'lucide-react'
 
 export default function Competitors() {
   const [competitors, setCompetitors] = useState<Competitor[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState({ name: '', source_url: '', category: '' })
+
+  // Discover state
+  const [discoverKeyword, setDiscoverKeyword] = useState('')
+  const [isDiscovering, setIsDiscovering] = useState(false)
+  const [discoveredRecords, setDiscoveredRecords] = useState<DiscoveredRecord[]>([])
+  const [isApproving, setIsApproving] = useState(false)
 
   const load = () => {
     competitorApi.getAll().then(setCompetitors).catch(console.error).finally(() => setLoading(false))
@@ -28,6 +34,43 @@ export default function Competitors() {
     load()
   }
 
+  const handleDiscover = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!discoverKeyword.trim()) return
+    setIsDiscovering(true)
+    setDiscoveredRecords([])
+    try {
+      const res = await scraperApi.discover(discoverKeyword.trim())
+      if (res.success) {
+        setDiscoveredRecords(res.data)
+      }
+    } catch (err) {
+      console.error('Discover failed', err)
+      alert('Search failed. Please try again.')
+    } finally {
+      setIsDiscovering(false)
+    }
+  }
+
+  const handleApproveDiscovered = async () => {
+    if (discoveredRecords.length === 0) return
+    setIsApproving(true)
+    try {
+      const res = await scraperApi.bulkApprove(discoveredRecords)
+      if (res.success) {
+        alert(`Successfully imported ${res.inserted} new records!`)
+        setDiscoveredRecords([])
+        setDiscoverKeyword('')
+        load() // Refresh competitors list
+      }
+    } catch (err) {
+      console.error('Approve failed', err)
+      alert('Failed to save records.')
+    } finally {
+      setIsApproving(false)
+    }
+  }
+
   const categories = [...new Set(competitors.map((c) => c.category))].filter(Boolean)
 
   return (
@@ -42,6 +85,80 @@ export default function Competitors() {
         <button className="btn-primary" onClick={() => setShowModal(true)}>
           <Plus size={16} /> Add Competitor
         </button>
+      </div>
+
+      {/* Discover Section */}
+      <div className="glass-card" style={{ marginBottom: '2rem', padding: '1.5rem' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Search size={18} style={{ color: 'var(--color-primary)' }} />
+          Discover Training Providers (Facebook Search)
+        </h3>
+        
+        <form onSubmit={handleDiscover} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: discoveredRecords.length > 0 ? '1.5rem' : 0 }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--color-text-secondary)', marginBottom: 4, display: 'block' }}>
+              Training Keyword (e.g. COSH, BOSH)
+            </label>
+            <input 
+              className="input-field" 
+              placeholder="Enter training name..." 
+              value={discoverKeyword}
+              onChange={(e) => setDiscoverKeyword(e.target.value)} 
+              required 
+            />
+          </div>
+          <button type="submit" className="btn-primary" disabled={isDiscovering} style={{ minWidth: '120px' }}>
+            {isDiscovering ? <Loader size={16} className="animate-spin" /> : <Search size={16} />} 
+            {isDiscovering ? 'Searching...' : 'Search'}
+          </button>
+        </form>
+
+        {discoveredRecords.length > 0 && (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>
+                Found {discoveredRecords.length} potential providers for "{discoverKeyword}"
+              </span>
+              <button 
+                className="btn-primary" 
+                onClick={handleApproveDiscovered} 
+                disabled={isApproving}
+                style={{ background: 'var(--color-success)', borderColor: 'var(--color-success)' }}
+              >
+                {isApproving ? <Loader size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                Approve & Save All
+              </button>
+            </div>
+            
+            <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {discoveredRecords.map((r, i) => (
+                <div key={i} style={{ 
+                  background: 'rgba(255,255,255,0.03)', 
+                  padding: '1rem', 
+                  borderRadius: '0.5rem',
+                  border: '1px solid rgba(255,255,255,0.05)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <h4 style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{r.provider}</h4>
+                    <span className="badge" style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8' }}>{r.delivery_mode}</span>
+                  </div>
+                  <a href={r.url} target="_blank" rel="noreferrer" style={{ 
+                    color: 'var(--color-accent-light)', textDecoration: 'none', 
+                    fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: '0.25rem' 
+                  }}>
+                    <Globe size={12} /> View Source URL
+                  </a>
+                  <p style={{ 
+                    fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem',
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
+                  }}>
+                    {r.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Category pills */}

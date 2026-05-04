@@ -79,3 +79,29 @@ export interface AnalyticsData {
 export const analyticsApi = {
   get: () => request<AnalyticsData>('/analytics'),
 };
+
+// --- Scraper ---
+export interface DiscoveredRecord {
+  title: string;
+  provider: string;
+  url: string;
+  description: string;
+  status: string;
+  source: string;
+  date: string | null;
+  price: string | null;
+  delivery_mode: string;
+}
+
+export const scraperApi = {
+  discover: (keyword: string) => 
+    request<{ success: boolean; count: number; data: DiscoveredRecord[] }>('/scraper/discover', { 
+      method: 'POST', 
+      body: JSON.stringify({ keyword }) 
+    }),
+  bulkApprove: (records: DiscoveredRecord[]) =>
+    request<{ success: boolean; inserted: number; message?: string }>('/scraper/bulk', {
+      method: 'POST',
+      body: JSON.stringify({ records, source: 'facebook_dork' })
+    }),
+};

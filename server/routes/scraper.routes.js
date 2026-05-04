@@ -14,6 +14,7 @@ const Competitor = require('../models/competitor.model');
 const { normalizeAll }    = require('../scraper/parsers/normalize');
 const { deduplicateRecords, deduplicateInMemory } = require('../scraper/utils/dedupe');
 const { triggerManualRun, getLastRunStats, isScraperRunning } = require('../scraper/scraper.scheduler');
+const { scrapeFacebookSearch } = require('../scraper/sources/facebook-search.scraper');
 
 // ─── POST /api/scraper/run ────────────────────────────────────────────────────
 // Manually trigger a scraper run
@@ -44,6 +45,23 @@ router.get('/status', (req, res) => {
     isRunning: isScraperRunning(),
     lastRun:   getLastRunStats(),
   });
+});
+
+// ─── POST /api/scraper/discover ───────────────────────────────────────────────
+// On-demand search for training providers on Facebook (via Google Dorks)
+router.post('/discover', async (req, res) => {
+  const { keyword } = req.body;
+  
+  if (!keyword || typeof keyword !== 'string') {
+    return res.status(400).json({ success: false, error: 'A valid keyword is required' });
+  }
+
+  try {
+    const results = await scrapeFacebookSearch(keyword);
+    res.json({ success: true, count: results.length, data: results });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // ─── POST /api/scraper/bulk ──────────────────────────────────────────────────
