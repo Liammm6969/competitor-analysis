@@ -3,6 +3,8 @@ import { competitorApi, scraperApi } from '../lib/api'
 import type { Competitor, DiscoveredRecord } from '../lib/api'
 import { Plus, Trash2, Globe, X, Users, Search, Loader, CheckCircle } from 'lucide-react'
 
+import DiscoveryTable from '../components/DiscoveryTable'
+
 export default function Competitors() {
   const [competitors, setCompetitors] = useState<Competitor[]>([])
   const [loading, setLoading] = useState(true)
@@ -52,11 +54,11 @@ export default function Competitors() {
     }
   }
 
-  const handleApproveDiscovered = async () => {
-    if (discoveredRecords.length === 0) return
+  const handleApproveDiscovered = async (recordsToApprove: DiscoveredRecord[]) => {
+    if (recordsToApprove.length === 0) return
     setIsApproving(true)
     try {
-      const res = await scraperApi.bulkApprove(discoveredRecords)
+      const res = await scraperApi.bulkApprove(recordsToApprove)
       if (res.success) {
         alert(`Successfully imported ${res.inserted} new records!`)
         setDiscoveredRecords([])
@@ -114,50 +116,11 @@ export default function Competitors() {
         </form>
 
         {discoveredRecords.length > 0 && (
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>
-                Found {discoveredRecords.length} potential providers for "{discoverKeyword}"
-              </span>
-              <button 
-                className="btn-primary" 
-                onClick={handleApproveDiscovered} 
-                disabled={isApproving}
-                style={{ background: 'var(--color-success)', borderColor: 'var(--color-success)' }}
-              >
-                {isApproving ? <Loader size={16} className="animate-spin" /> : <CheckCircle size={16} />}
-                Approve & Save All
-              </button>
-            </div>
-            
-            <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {discoveredRecords.map((r, i) => (
-                <div key={i} style={{ 
-                  background: 'rgba(255,255,255,0.03)', 
-                  padding: '1rem', 
-                  borderRadius: '0.5rem',
-                  border: '1px solid rgba(255,255,255,0.05)'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h4 style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{r.provider}</h4>
-                    <span className="badge" style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8' }}>{r.delivery_mode}</span>
-                  </div>
-                  <a href={r.url} target="_blank" rel="noreferrer" style={{ 
-                    color: 'var(--color-accent-light)', textDecoration: 'none', 
-                    fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: '0.25rem' 
-                  }}>
-                    <Globe size={12} /> View Source URL
-                  </a>
-                  <p style={{ 
-                    fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem',
-                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
-                  }}>
-                    {r.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <DiscoveryTable 
+            results={discoveredRecords} 
+            onApprove={handleApproveDiscovered} 
+            isApproving={isApproving} 
+          />
         )}
       </div>
 

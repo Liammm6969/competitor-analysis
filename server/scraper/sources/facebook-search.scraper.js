@@ -29,7 +29,7 @@ const FACEBOOK_NOISE_PATHS = [
   '/public/',
   '/people/',
   '/groups/',
-  '/posts/',        // Individual post URLs — not provider pages
+  '/posts/',
   '/events/',
   '/marketplace/',
   '/watch/',
@@ -182,9 +182,13 @@ async function performSerpApiSearch(keyword, maxPages, location) {
         description: snippet,
         status: 'discovered',
         source: 'facebook_serpapi_dork',
+        type: detectDeliveryMode(snippet),
+        online_price: detectDeliveryMode(snippet) === 'Online' ? extractPrice(snippet) : null,
+        f2f_price: detectDeliveryMode(snippet) === 'In-Person' ? extractPrice(snippet) : null,
+        inclusion: extractInclusion(snippet),
+        weakness: null,
+        trainings_offered: extractTrainings(snippet, keyword),
         date: extractDate(snippet),
-        price: extractPrice(snippet),
-        delivery_mode: detectDeliveryMode(snippet),
       });
     }
 
@@ -274,6 +278,31 @@ function extractDate(snippet) {
 function extractPrice(snippet) {
   const match = snippet.match(/(?:₱|PHP|Php|P)\s?[\d,]+/i);
   return match ? match[0] : null;
+}
+
+/**
+ * Attempts to extract inclusions (e.g. "with certificate", "with kit") from snippet.
+ * @param {string} snippet
+ * @returns {string|null}
+ */
+function extractInclusion(snippet) {
+  const match = snippet.match(
+    /(?:includ(?:es?|ing)|with|(?:free\s+))[\s:]*(certificate|kit|materials?|modules?|lunch|id|uniform|reviewer)[^.;]*/i
+  );
+  return match ? match[0].trim() : null;
+}
+
+/**
+ * Extracts training names mentioned in the snippet around the keyword.
+ * Falls back to the keyword itself if nothing richer is found.
+ * @param {string} snippet
+ * @param {string} keyword
+ * @returns {string}
+ */
+function extractTrainings(snippet, keyword) {
+  const known = ['BOSH', 'COSH', 'HIRAC', 'LCM', 'First Aid', 'BLS', 'CPR', 'SO1', 'SO2', 'SO3'];
+  const found = known.filter(t => snippet.toUpperCase().includes(t.toUpperCase()));
+  return found.length > 0 ? found.join(', ') : keyword;
 }
 
 module.exports = { scrapeFacebookSearch };

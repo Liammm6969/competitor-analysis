@@ -88,9 +88,13 @@ export interface DiscoveredRecord {
   description: string;
   status: string;
   source: string;
+  type: string | null;
+  online_price: string | null;
+  f2f_price: string | null;
+  inclusion: string | null;
+  weakness: string | null;
+  trainings_offered: string;
   date: string | null;
-  price: string | null;
-  delivery_mode: string;
 }
 
 export const scraperApi = {
