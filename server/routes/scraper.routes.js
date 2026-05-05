@@ -14,7 +14,6 @@ const Competitor = require('../models/competitor.model');
 const { normalizeAll }    = require('../scraper/parsers/normalize');
 const { deduplicateRecords, deduplicateInMemory } = require('../scraper/utils/dedupe');
 const { triggerManualRun, getLastRunStats, isScraperRunning } = require('../scraper/scraper.scheduler');
-const { scrapeFacebookSearch } = require('../scraper/sources/facebook-search.scraper');
 
 // ─── POST /api/scraper/run ────────────────────────────────────────────────────
 // Manually trigger a scraper run
@@ -47,17 +46,19 @@ router.get('/status', (req, res) => {
   });
 });
 
+const { discoverCompetitors } = require('../services/discovery.service');
+
 // ─── POST /api/scraper/discover ───────────────────────────────────────────────
-// On-demand search for training providers on Facebook (via Google Dorks)
+// On-demand search for training providers on Facebook (via Google Dorks + FB Search)
 router.post('/discover', async (req, res) => {
-  const { keyword } = req.body;
+  const { keyword, engines = 'both' } = req.body;
   
   if (!keyword || typeof keyword !== 'string') {
     return res.status(400).json({ success: false, error: 'A valid keyword is required' });
   }
 
   try {
-    const results = await scrapeFacebookSearch(keyword);
+    const results = await discoverCompetitors(keyword, { engines });
     res.json({ success: true, count: results.length, data: results });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

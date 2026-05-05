@@ -95,6 +95,11 @@ export interface DiscoveredRecord {
   weakness: string | null;
   trainings_offered: string;
   date: string | null;
+  likes: number | null;
+  category: string | null;
+  address: string | null;
+  phone: string | null;
+  website: string | null;
 }
 
 export const scraperApi = {
